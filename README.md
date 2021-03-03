@@ -1,18 +1,3 @@
-# Universidad Nacional De Córdoba
-## Facultad de Ciencias Exactas, Físicas y Naturales
-### Sistemas Operativos I
-#### Trabajo Práctico N° 2: myshell
-------
-#### Piñero, Tomás Santiago - Año 2019
-------
-
-#### Objetivos
-Con el desarrollo del siguiente Trabajo Práctico (TP), se busca:
-
- - Utilizar mecanismos de creación de procesos.
- - Utilizar mecanismos de concurrencia e IPC.
- - Diseñar un intérprete de línea de comandos al estilo Bourne shell.
-
 #### Funcionalidades
 
 1. **Comandos internos:** *myshell* soporta 4 comandos internos:
@@ -85,7 +70,7 @@ Se dividió el proyecto en la siguiente estructura:
    ```zsh
      $ ./myshell
    ```
-    
+
    Esto mostrará un *prompt* con la ubicación del directorio actual junto con el nombre de usuario y máquina, esperando la introducción de comandos por parte del usuario.
 
   2. Ejecución automática a través de un **_batchfile_**:
@@ -93,7 +78,7 @@ Se dividió el proyecto en la siguiente estructura:
   ```zsh
     $ ./myshell batchfile
   ```
-    
+
    Ejecuta los comandos del arhivo *batchfile* y una vez que éste se termina, *myshell* termina su ejecución.
 
 4. Si se desea eliminar los archivos generados por el *makefile*, simplemente ingresar en consola:
