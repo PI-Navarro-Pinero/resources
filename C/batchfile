@@ -1,5 +1,0 @@
-echo probando batchfile
-cd ..
-echo test
-cd ./TP2
-echo bye
