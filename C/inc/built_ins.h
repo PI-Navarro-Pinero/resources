@@ -11,7 +11,6 @@
 #define TOKEN_BUFSIZE 64
 #define TOKEN_DELIM " \t\r\n\a"
 
-void loop(char linea[STR_LEN]);//, int *estado);
 char **parsear(char *linea);
 int  run(char **args);
 int  ejecutar(char **args);

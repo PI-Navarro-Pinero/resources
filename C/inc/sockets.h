@@ -47,16 +47,7 @@ int create_svsocket(char *ip, uint16_t port);
  * @param  newfd  File descriptor del cliente.
  * @return        File descriptor cliente-servidor.
  */
-int start_listening(int sockfd, int newfd);
-
-/**
- * @brief
- * Loop en la que recibe los mensajes del cliente conectado.
- * @param sockfd  File descriptor del servidor.
- * @param newfd   File descriptor del cliente.
- * @param msg_buf Buffer para almacenar los mensajes.
- */
-void loop_listen(int sockfd, int newfd, char msg_buf[STR_LEN]);
+int start_listening(int sockfd);//, int newfd);
 
 /**
  * @brief

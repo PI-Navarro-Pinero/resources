@@ -38,33 +38,6 @@ int builtins()
 
 /**
  * @brief
- * Función proncipal del programa. Muestra el prompt con el directorio
- * actual, el usuario y el nombre de la máquina, y toma los comandos
- * que se escriben.
- */
-void loop(char linea[STR_LEN])
-{
-  char **args;
-  int estado;
-
-  // char *user = getenv("USER");
-  // if(user == NULL) user = "usuario";
-  //
-  // char host[100];
-  // gethostname(host,100);
-
-  // do
-  // {
-  args = parsear(linea);
-  estado = ejecutar(args);
-  // free(linea);
-  // free(args);
-  // } while(estado);
-}
-
-
-/**
- * @brief
  * Se toma la linea y se la divide en tokens,
  * guardando cada puntero en el buffer. En caso que
  * se necesite reasignar los punteros, se lo hace.
@@ -268,5 +241,5 @@ int echo_com(char **args)
  */
 int quit_com(char **args)
 {
-  return 0;
+  return 1;
 }

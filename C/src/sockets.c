@@ -63,6 +63,7 @@ ssize_t recv_cmd(int sockfd, void *cmd)
   memset(buf, '\0', STR_LEN);
 
   r = recv(sockfd, buf, STR_LEN-1, 0);
+  buf[strlen(buf)-1] = '\0';
   strcpy((char *) cmd, buf);
 
   return r;
@@ -114,7 +115,7 @@ int create_svsocket(char *ip, uint16_t port)
  * @param  newfd  File descriptor del cliente.
  * @return        File descriptor cliente-servidor.
  */
-int start_listening(int sockfd, int newfd)
+int start_listening(int sockfd)//, int newfd)
 {
   sockfd = create_svsocket(IP_ADDR, PUERTO);
 
@@ -127,7 +128,7 @@ int start_listening(int sockfd, int newfd)
   listen(sockfd, 1);
   cl_len = sizeof(cl_addr);
 
-  newfd = accept(sockfd, (struct sockaddr *) &cl_addr, &cl_len);
+  int newfd = accept(sockfd, (struct sockaddr *) &cl_addr, &cl_len);
   check_error(newfd);
 
   inet_ntop(AF_INET, &(cl_addr.sin_addr), cl_ip, INET_ADDRSTRLEN);
@@ -135,39 +136,4 @@ int start_listening(int sockfd, int newfd)
 
   close(sockfd);
   return newfd;
-}
-
-/**
- * @brief
- * Loop en la que recibe los mensajes del cliente conectado.
- * @param sockfd  File descriptor del servidor.
- * @param newfd   File descriptor del cliente.
- * @param msg_buf Buffer para almacenar los mensajes.
- */
-void loop_listen(int sockfd, int newfd, char msg_buf[STR_LEN])
-{
-  int err;
-  int rw;
-  char **args;
-
-  while(1)
-    {
-      rw = recv_cmd(newfd, msg_buf);
-      check_error((int) rw);
-
-      if(!strcmp(msg_buf,"exit"))
-        {
-          err = start_listening(sockfd, newfd);
-          check_error(err);
-
-          rw = recv_cmd(newfd, msg_buf);
-          check_error((int) rw);
-        }
-      else
-      {
-        args = parsear(msg_buf);
-        ejecutar(args);
-        send_cmd(newfd,"COMANDO EJECUTADO.\n");
-      }
-    } //while(estado);
 }
