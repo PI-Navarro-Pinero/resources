@@ -9,21 +9,10 @@
  */
 char *builtin_str[] = {
   "cd",
-  "clr",
+  "clear",
   "echo",
-  "quit"
-};
-
-/**
- * @brief
- * Declaración de las funciones propias de la consola.
- * @param builtin_fun lista de funciones propias.
- */
-int (*builtin_fun[])(char **) = {
-  &cd_com,
-  &clr_com,
-  &echo_com,
-  &quit_com
+  "pwd",
+  "ls"
 };
 
 /**
@@ -91,11 +80,12 @@ char **parsear(char *linea)
  * @param  args argumentos
  * @return      ejecución exitosa
  */
-int run(char **args)
+int run(char **args, int socket)
 {
-  char file_name[256];//, input_file[256], output_file[256];
+  char file_name[256];
   pid_t pid;
   int estado, io_redirection;
+  int stdin_state, stdout_state, stderr_state;
 
   int tiene_amp = 0;
 
@@ -110,7 +100,7 @@ int run(char **args)
   switch (pid)
   {
     case -1:
-      perror("EROR_fork");
+      perror("ERROR_fork");
       break;
 
     case 0:
@@ -126,6 +116,20 @@ int run(char **args)
         case O_REDIRECTION:
           output_redirection(file_name);
           break;
+      }
+
+      close(0);
+      close(1);
+      close(2);
+
+      stdin_state  = dup(socket);
+      stdout_state = dup(socket);
+      stderr_state = dup(socket);
+
+      if(stdin_state != 0 || stdout_state != 1 || stderr_state != 2)
+      {
+        perror("ERROR_socket_dup");
+        exit(EXIT_FAILURE);
       }
 
       execvp(args[0], args);
@@ -151,17 +155,17 @@ int run(char **args)
  * @return built-in   comando built-in
  * @return            proceso
  */
-int ejecutar(char **args)
+int ejecutar(char **args, int socket)
 {
   if(args[0] == NULL) return 1;
 
   for (int i = 0; i < builtins(); i++)
   {
     if(strcmp(args[0], builtin_str[i]) == 0)
-    return(*builtin_fun[i])(args);
+    return run(args, socket);
   }
 
-  return run(args);
+  return 0;
 }
 
 /**
