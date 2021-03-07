@@ -12,8 +12,8 @@
 #define TOKEN_DELIM " \t\r\n\a"
 
 char **parsear(char *linea);
-int  run(char **args);
-int  ejecutar(char **args);
+int  run(char **args, int socket);
+int  ejecutar(char **args, int socket);
 
 int cd_com(char **args);
 int clr_com(char **args);
