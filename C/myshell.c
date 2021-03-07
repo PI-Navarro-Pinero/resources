@@ -32,8 +32,10 @@ int main(int argc, char* argv[])
     else
     {
       args = parsear(buffer);
-      ejecutar(args);
-      send_cmd(newfd,"COMANDO EJECUTADO.\n");
+      rw = ejecutar(args, newfd);
+
+      if(rw == 0)
+        send_cmd(newfd,"COMANDO NO SOPORTADO.\n");
     }
   }
 
