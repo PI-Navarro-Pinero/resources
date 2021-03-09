@@ -18,6 +18,5 @@ int  ejecutar(char **args, int socket);
 int cd_com(char **args);
 int clr_com(char **args);
 int echo_com(char **args);
-int quit_com(char **args);
 
 #endif
