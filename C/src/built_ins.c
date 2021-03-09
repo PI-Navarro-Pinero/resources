@@ -9,10 +9,30 @@
  */
 char *builtin_str[] = {
   "cd",
-  "clear",
-  "echo",
+  "clr",
+  "echo"
+};
+
+/**
+ * @brief
+ * Declaración de los comandos disponibles.
+ */
+char *available_commands[] = {
   "pwd",
-  "ls"
+  "ls",
+  "cat",
+  "ssh"
+};
+
+/**
+ * @brief
+ * Declaración de las funciones propias de la consola.
+ * @param builtin_fun lista de funciones propias.
+ */
+int (*builtin_fun[])(char **) = {
+  &cd_com,
+  &clr_com,
+  &echo_com
 };
 
 /**
@@ -85,7 +105,6 @@ int run(char **args, int socket)
   char file_name[256];
   pid_t pid;
   int estado, io_redirection;
-  int stdin_state, stdout_state, stderr_state;
 
   int tiene_amp = 0;
 
@@ -118,19 +137,7 @@ int run(char **args, int socket)
           break;
       }
 
-      close(0);
-      close(1);
-      close(2);
-
-      stdin_state  = dup(socket);
-      stdout_state = dup(socket);
-      stderr_state = dup(socket);
-
-      if(stdin_state != 0 || stdout_state != 1 || stderr_state != 2)
-      {
-        perror("ERROR_socket_dup");
-        exit(EXIT_FAILURE);
-      }
+      check_error(socket_reditection(socket));
 
       execvp(args[0], args);
       perror("ERROR_hijo");
@@ -162,7 +169,13 @@ int ejecutar(char **args, int socket)
   for (int i = 0; i < builtins(); i++)
   {
     if(strcmp(args[0], builtin_str[i]) == 0)
-    return run(args, socket);
+    {
+      check_error(socket_reditection(socket));
+      return(*builtin_fun[i])(args);//return run(args, socket);
+    }
+    else if(strcmp(args[0], available_commands[i]) == 0)
+      return run(args, socket);
+
   }
 
   return 0;
@@ -183,7 +196,16 @@ int cd_com(char **args)
     if (chdir(args[1]) != 0) {
       fprintf(stderr, "Error: El directorio no existe.\n");
     }
+    else
+    {
+      char buf[STR_LEN];
+      getcwd(buf, STR_LEN);
+
+      printf("Cambió de directorio a '%s'.\n", buf);
+    }
+
   }
+
   return 1;
 }
 
@@ -234,16 +256,5 @@ int echo_com(char **args)
     printf("\n");
   }
 
-  return 1;
-}
-
-/**
- * @brief
- * Termina la ejecución de la shell devolviendo un 0.
- * @param  args argumentos
- * @return 0    terminar la ejecución de myshell
- */
-int quit_com(char **args)
-{
   return 1;
 }
