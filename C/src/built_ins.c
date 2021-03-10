@@ -203,7 +203,6 @@ int cd_com(char **args)
 
       printf("Cambió de directorio a '%s'.\n", buf);
     }
-
   }
 
   return 1;
@@ -231,7 +230,6 @@ int clr_com(char **args)
  */
 int echo_com(char **args)
 {
-  //printf("Este es el echo de myshellobama");
   char file_name[256];
   FILE *output;
   int i = 1;
@@ -246,6 +244,8 @@ int echo_com(char **args)
     }
     fprintf(output, "%s", "\n");
     fclose(output);
+
+    printf("Archivo '%s' creado exitosamente.\n", file_name);
   } else
   {
     while(args[i] != NULL)
