@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
 
     if(!strcmp(buffer,"quit"))
       {
-        send_cmd(newfd,"TERMINADO. ESCUCHANDO DE NUEVO\n");
         newfd = start_listening(sockfd);
         check_error(newfd);
       }

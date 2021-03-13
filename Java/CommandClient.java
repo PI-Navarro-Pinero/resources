@@ -22,20 +22,31 @@ public class CommandClient {
             System.out.println("Conectado exitosamente a " + direccionIP);
 
             while (!cmd.equals("quit")) {
-                System.out.print(">> ");
-                in = new Scanner(System.in);
-                cmd = in.nextLine();
+              //Muestra prompt y espera el input del usuario
+              System.out.print(">> ");
+              in = new Scanner(System.in);
+              cmd = in.nextLine();
 
-                PrintWriter toConsole = new PrintWriter(socket.getOutputStream(), true);
+              //Para escribir en el socket (enviar comando)
+              PrintWriter toConsole = new PrintWriter(socket.getOutputStream(), true);
 
-                InputStreamReader input = new InputStreamReader(socket.getInputStream());
-                BufferedReader fromConsole = new BufferedReader(input);
+              //Para leer el socket
+              InputStreamReader input = new InputStreamReader(socket.getInputStream());
+              BufferedReader fromConsole = new BufferedReader(input);
 
-                toConsole.println(cmd);
+              //Envía el comando
+              toConsole.println(cmd);
 
+              //Espera una respuesta (que el resultado del comando se escriba
+              //en el socket)
+              while(!fromConsole.ready());
+
+              //Mientras se pueda leer, que lo imprima
+              while(fromConsole.ready())
+              {
                 linea = fromConsole.readLine();
-
                 System.out.println(linea);
+              }
             }
         } catch (UnknownHostException e) {
             System.out.println(e.getMessage());
