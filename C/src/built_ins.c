@@ -20,8 +20,7 @@ char *builtin_str[] = {
 char *available_commands[] = {
   "pwd",
   "ls",
-  "cat",
-  "ssh"
+  "cat"
 };
 
 /**
@@ -173,12 +172,12 @@ int ejecutar(char **args, int socket)
       check_error(socket_reditection(socket));
       return(*builtin_fun[i])(args);//return run(args, socket);
     }
-    else if(strcmp(args[0], available_commands[i]) == 0)
-      return run(args, socket);
+    //else if(strcmp(args[0], available_commands[i]) == 0)
+      // return run(args, socket);
 
   }
-
-  return 0;
+  return run(args, socket);
+  // return 0;
 }
 
 /**
