@@ -23,7 +23,7 @@ public class CommandClient {
 
             while (!cmd.equals("quit")) {
               //Muestra prompt y espera el input del usuario
-              System.out.print(">> ");
+              System.out.print("--) ");
               in = new Scanner(System.in);
               cmd = in.nextLine();
 
