@@ -1,5 +1,7 @@
 #include "built_ins.h"
-#include "sockets.h"
+
+#define COLOR_PROMPT "\x1b[36;1m"
+#define COLOR_RESET  "\x1b[0m"
 
 int main(int argc, char* argv[])
 {
@@ -7,37 +9,35 @@ int main(int argc, char* argv[])
   printf("|---|----------       myshell         ----------|---|\n");
   printf("|---|-------------------------------------------|---|\n\n");
 
-  int rw;
-  int sockfd = -1;
-  int newfd  = -1;
-
-  char buffer[STR_LEN];
+  char path[1024];
+  char *linea;
   char **args;
+  int estado;
 
-  newfd = start_listening(sockfd);
+  // char *user = getenv("USER");
+  // if(user == NULL) user = "usuario";
+  //
+  // char host[100];
+  // gethostname(host,100);
 
-  //Recibe los comandos del cliente, en caso de recibir un 'quit',
-  //cierra la conexion y espera una conexion nueva
-  while(1)
-    {
-      rw = recv_cmd(newfd, buffer);
-      check_error((int) rw);
+  do
+  {
+    if(getcwd(path, sizeof(path)) != NULL)
+      printf(COLOR_PROMPT "\n%s" COLOR_RESET "\n", path);
+    else
+      printf("\nError al obtener directorio actual.\n");
 
-      if(!strcmp(buffer,"quit"))
-        {
-          send_cmd(newfd, "¡Adiós!\n");
-          newfd = start_listening(sockfd);
-          check_error(newfd);
-        }
-      else
-        {
-          args = parsear(buffer);
-          rw   = ejecutar(args, newfd);
+    printf("|> ");
+    // printf("%s@%s:-", user, host);
+    // showPath();
 
-          if(rw == 0)
-            send_cmd(newfd,"Comando no soportado.\n");
-        }
-    }
+    linea = leer_linea();
+    args = parsear(linea);
+    estado = ejecutar(args);
+
+    free(linea);
+    free(args);
+  } while(estado);
 
   return EXIT_SUCCESS;
 }
