@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
   buffer[strlen(buffer)-1] = '\0';
 
-  printf("Usted ingrsó: '%s'\n", buffer);
+  printf("Usted ingresó: '%s'\n", buffer);
 
   return EXIT_SUCCESS;
 }
