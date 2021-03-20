@@ -8,7 +8,7 @@ ODIR =./obj
 SRC  =./src
 
 # Objetos
-_OBJ = built_ins.o segundo_plano.o IO_redirection.o sockets.o
+_OBJ = built_ins.o segundo_plano.o IO_redirection.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 # Compila las dependencias
