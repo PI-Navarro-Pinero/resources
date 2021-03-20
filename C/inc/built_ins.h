@@ -11,12 +11,13 @@
 #define TOKEN_BUFSIZE 64
 #define TOKEN_DELIM " \t\r\n\a"
 
-char **parsear(char *linea);
-int  run(char **args, int socket);
-int  ejecutar(char **args, int socket);
+char *leer_linea();
+char **parsear  (char *linea);
+int  run        (char **args);
+int  ejecutar   (char **args);
 
-int cd_com(char **args);
-int clr_com(char **args);
+int cd_com  (char **args);
+int clr_com (char **args);
 int echo_com(char **args);
-
+int quit_com(char **args);
 #endif

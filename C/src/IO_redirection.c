@@ -125,30 +125,3 @@ void borrar_simbolo(char **args, int posicion)
     posicion++;
   }
 }
-
-/**
- * @brief
- * Redirecciona STDIN; STDOUT y STDERR al socket que se le pase como
- * argumento.
- * @param   socket Socket al que se desea redirigir las E/S.
- */
-int socket_reditection(int socket)
-{
-  int stdin_state, stdout_state, stderr_state;
-
-  close(0);
-  close(1);
-  close(2);
-
-  stdin_state  = dup(socket);
-  stdout_state = dup(socket);
-  stderr_state = dup(socket);
-
-  if(stdin_state != 0 || stdout_state != 1 || stderr_state != 2)
-  {
-    perror("ERROR_socket_dup");
-    return -1;
-  }
-
-  return 0;
-}

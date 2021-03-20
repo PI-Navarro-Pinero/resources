@@ -1,7 +1,6 @@
 #include "built_ins.h"
 #include "segundo_plano.h"
 #include "IO_redirection.h"
-#include "sockets.h"
 
 /**
  * @brief
@@ -10,7 +9,8 @@
 char *builtin_str[] = {
   "cd",
   "clr",
-  "echo"
+  "echo",
+  "quit"
 };
 
 /**
@@ -31,7 +31,8 @@ char *available_commands[] = {
 int (*builtin_fun[])(char **) = {
   &cd_com,
   &clr_com,
-  &echo_com
+  &echo_com,
+  &quit_com
 };
 
 /**
@@ -42,6 +43,30 @@ int (*builtin_fun[])(char **) = {
 int builtins()
 {
   return sizeof(builtin_str)/sizeof(char *);
+}
+
+/**
+ * @brief
+ * Lee la línea ingresada en la consola.
+ * @return la línea escrita.
+ */
+char *leer_linea()
+{
+  char *linea = NULL;
+  size_t bufsize = 0;
+
+  if(getline(&linea, &bufsize, stdin) == -1)
+  {
+    if(feof(stdin)) //recibio un EOF
+      exit(EXIT_SUCCESS);
+    else
+    {
+      perror("leer_linea");
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  return linea;
 }
 
 /**
@@ -99,7 +124,7 @@ char **parsear(char *linea)
  * @param  args argumentos
  * @return      ejecución exitosa
  */
-int run(char **args, int socket)
+int run(char **args)
 {
   char file_name[256];
   pid_t pid;
@@ -136,8 +161,6 @@ int run(char **args, int socket)
           break;
       }
 
-      check_error(socket_reditection(socket));
-
       execvp(args[0], args);
       perror("ERROR_hijo");
       break;
@@ -161,7 +184,7 @@ int run(char **args, int socket)
  * @return built-in   comando built-in
  * @return            proceso
  */
-int ejecutar(char **args, int socket)
+int ejecutar(char **args)
 {
   if(args[0] == NULL) return 1;
 
@@ -169,14 +192,13 @@ int ejecutar(char **args, int socket)
   {
     if(strcmp(args[0], builtin_str[i]) == 0)
     {
-      check_error(socket_reditection(socket));
       return(*builtin_fun[i])(args);//return run(args, socket);
     }
     //else if(strcmp(args[0], available_commands[i]) == 0)
       // return run(args, socket);
 
   }
-  return run(args, socket);
+  return run(args);
   // return 0;
 }
 
@@ -195,13 +217,13 @@ int cd_com(char **args)
     if (chdir(args[1]) != 0) {
       fprintf(stderr, "Error: El directorio no existe.\n");
     }
-    else
-    {
-      char buf[STR_LEN];
-      getcwd(buf, STR_LEN);
-
-      printf("Cambió de directorio a '%s'.\n", buf);
-    }
+    // else
+    // {
+    //   char buf[STR_LEN];
+    //   getcwd(buf, STR_LEN);
+    //
+    //   printf("Cambió de directorio a '%s'.\n", buf);
+    // }
   }
 
   return 1;
@@ -256,4 +278,15 @@ int echo_com(char **args)
   }
 
   return 1;
+}
+
+/**
+ * @brief
+ * Termina la ejecución de la shell devolviendo un 0.
+ * @param  args argumentos
+ * @return 0    terminar la ejecución de myshell
+ */
+int quit_com(char **args)
+{
+  return 0;
 }
