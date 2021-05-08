@@ -13,6 +13,7 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 # Compila las dependencias
 $(ODIR)/%.o: $(SRC)/%.c $(DEPS)
+	@ mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 # Compila el programa principal
