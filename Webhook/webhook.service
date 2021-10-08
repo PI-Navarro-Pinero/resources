@@ -1,0 +1,11 @@
+[Unit]
+Description=Servicio que recibe payloads del webhook PINP
+
+[Service]
+User=pi
+Type=simple
+ExecStart=/usr/bin/webhook
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
