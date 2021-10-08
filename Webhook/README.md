@@ -11,7 +11,7 @@ It's implemented as a `systemd` service. So see below if you need to make change
 
 ## Installing the service
 
-To use this API as a service, you need to copy the `[webhook.service](webhook.service)` file to `/etc/systemd/system/` and start it with `sudo systemctl start webhook.service`
+To use this API as a service, you need to copy the [`webhook.service`](webhook.service) file to `/etc/systemd/system/` and start it with `sudo systemctl start webhook.service`
 
 ## Updating service
 
