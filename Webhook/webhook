@@ -1,21 +1,17 @@
-#!/bin/python
+#!/bin/ruby
 
-from flask import Flask, request, abort
-import os, json
+require 'sinatra'
+require 'json'
 
-app = Flask(__name__)
+post '/deploy' do
+  request.body.rewind
+  payload_body = request.body.read
+  verify_signature(payload_body)
+  system('kubectl rollout restart deployment/backend')
+  "Deploy successful!"
+end
 
-@app.route('/deploy', methods=['POST'])
-def webhook():
-   if request.method == 'POST':
-       payload = request.get_json()
-       ref = payload['ref']
-       if '/master' in ref:
-           os.system('kubectl rollout restart deployment/backend')
-           return 'Deployement updated!\n', 200
-       return 'Push is not on master\n', 200
-   else:
-      abort(400)
-
-if __name__ == '__main__':
-    app.run()
+def verify_signature(payload_body)
+  signature = 'sha256=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), ENV['SECRET_KEY'], payload_body)
+  return halt 500, "Signatures didn't match!" unless Rack::Utils.secure_compare(signature, request.env['HTTP_X_HUB_SIGNATURE_256'])
+end
