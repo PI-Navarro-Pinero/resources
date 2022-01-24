@@ -65,6 +65,6 @@ class Listener:
 				
 			print(result)
 
-my_listener = Listener("192.168.0.199", 4444) # ip for binding the listener to local machine
+my_listener = Listener("192.168.0.45", 4444) # ip for binding the listener to local machine
 print("[+] Type 'stop' to stop connection and quit programs.")
 my_listener.run()
